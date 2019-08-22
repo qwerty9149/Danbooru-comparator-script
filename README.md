@@ -1,0 +1,1 @@
+# Danbooru-comparator-script
