@@ -1,0 +1,79 @@
+#!/bin/bash
+echo "Let's start."
+        Init="1"
+        while [ $Init -ne "0" ]
+                do
+                echo "Which list do you want to scour?"
+                read sel
+                        inputchk='^[0-9]+$'
+                        errorinput="Invalid input"
+                        if ! [[ $sel =~ $inputchk ]]; then
+                        echo $errorinput
+
+                        elif [ $sel -eq "1" ]; then
+                                echo "You have selected Kantai Collection, correct? 1 for yes."
+                                read sel
+                                if ! [[ $sel =~ $inputchk ]]; then
+                                echo $errorinput
+                                elif [ $sel -eq "1" ]; then
+                                list="kantaiurl"
+                                end="_(kantai_collection)"
+                                Init="0"
+				nametxt="Kantai.csv"
+                                fi
+
+                        elif [ $sel -eq "2" ]; then
+                                echo "You have selected Azur Lane, correct? 1 for yes."
+                                read sel
+                                if ! [[ $sel =~ $inputchk ]]; then
+                                echo $errorinput
+                                elif [ $sel -eq "1" ]; then
+                                list="azurlaneurl"
+                                end="_(azur_lane)"
+                                Init="0"
+				nametxt="Azur.csv"
+                                fi
+
+                        elif [ $sel -eq "3" ]; then
+                                echo "You have selected Touhou, correct? 1 for yes."
+                                read sel
+                                if ! [[ $sel =~ $inputchk ]]; then
+                                echo $errorinput
+                                elif [ $sel -eq "1" ]; then
+                                list="touhouurl"
+                                end=""
+                                Init="0"
+				nametxt="Touhou.csv"
+                                fi
+                        else
+                                echo "Unsupported option. Check if you have implemented it yet, dummy..."
+                        fi
+                        done
+        count=$(wc -l < "$list")
+        headoff="0"
+        head="1"
+	i="1"
+       	while [ $count -ne "0" ]
+	 do
+                        echo $count 
+                        name=$(cat $list | head -n $head | tail -n 1 | sed $'s/\r//')
+                        url="https://danbooru.donmai.us/counts/posts?tags="
+			urlt="$url$name"
+			urlexe="$urlt$end"
+                        wget -O $name $urlexe
+                        sleep 10
+                        part1=$(sed -n -e '/Post count for/,$p' $name | head -n 2 | tail -n 1 | tr -d " \t\n\r")
+                        comma=","
+			temphold="$part1$comma"
+			urlextent=""+rating:s""
+			urltt="$urlexe$urlextent"
+			wget -O $name $urltt
+			sleep 10
+			part2=$(sed -n -e '/Post count for/,$p' $name | head -n 2 | tail -n 1 | tr -d " \t\n\r")
+			head=$((head+1))
+        		count=$((count-1))
+			result="$temphold$part2"
+			echo $result >> $nametxt
+			rm $name
+	                done
+        echo "done"
