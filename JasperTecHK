@@ -1,5 +1,5 @@
 #!/bin/bash
-echo "Let's start."
+echo "Script start!"
         Init="1"
         while [ $Init -ne "0" ]
                 do
@@ -53,28 +53,66 @@ echo "Let's start."
         headoff="0"
         head="1"
 	i="1"
+	comma=","
 	count=$((count+1))
-       	while [ $count -ne "0" ]
-	 do
-                        echo "You have $count tag(s) left."
-                        name=$(cat $list | head -n $head | tail -n 1 | sed $'s/\r//')
-                        url="https://danbooru.donmai.us/counts/posts?tags="
-			urlt="$url$name"
-			urlexe="$urlt$end"
-                        wget -O $name $urlexe
-                        sleep 10
-                        part1=$(sed -n -e '/Post count for/,$p' $name | head -n 2 | tail -n 1 | tr -d " \t\n\r")
-                        comma=","
-			temphold="$part1$comma"
-			urlextent=""+rating:s""
-			urltt="$urlexe$urlextent"
-			wget -O $name $urltt
-			sleep 2.5
-			part2=$(sed -n -e '/Post count for/,$p' $name | head -n 2 | tail -n 1 | tr -d " \t\n\r")
-			head=$((head+1))
-        		count=$((count-1))
-			result="$temphold$part2"
-			echo $result >> $nametxt
-			rm $name
-	                done
-        echo "done"
+        echo "Verbose mode? 1 for Yes."
+	read sel
+	if ! [[ $sel =~ $inputchk ]]; then
+		echo $errorinput
+	fi
+	elif [ $sel -eq "1" ]; then
+		while [ $count -ne "0" ]
+		do
+							echo "You have $count tag(s) left."
+							name=$(cat $list | head -n $head | tail -n 1 | sed $'s/\r//')
+							url="https://danbooru.donmai.us/counts/posts?tags="
+				urlt="$url$name"
+				urlexe="$urlt$end"
+							wget -O $name $urlexe
+							sleep 2.5
+					part1=$(sed -n -e '/Post count for/,$p' $name | head -n 2 | tail -n 1 | tr -d " \t\n\r")
+				temphold="$part1$comma"
+				urlextent=""+rating:s""
+				urltt="$urlexe$urlextent"
+							wget -O $name $urltt
+							sleep 2.5
+					part2=$(sed -n -e '/Post count for/,$p' $name | head -n 2 | tail -n 1 | tr -d " \t\n\r")
+				head=$((head+1))
+					count=$((count-1))
+				result="$temphold$part2"
+				echo $result >> $nametxt
+				rm $name
+						done
+	fi
+	elif [ $sel -eq "0" ]; then
+		while [ $count -ne "0" ]
+		do
+							echo "You have $count tag(s) left."
+							name=$(cat $list | head -n $head | tail -n 1 | sed $'s/\r//')
+							url="https://danbooru.donmai.us/counts/posts?tags="
+				urlt="$url$name"
+				urlexe="$urlt$end"
+							wget -q -O $name $urlexe
+							sleep 2.5
+					part1=$(sed -n -e '/Post count for/,$p' $name | head -n 2 | tail -n 1 | tr -d " \t\n\r")
+				temphold="$part1$comma"
+				urlextent=""+rating:s""
+				urltt="$urlexe$urlextent"
+							wget -q -O $name $urltt
+							sleep 2.5
+					part2=$(sed -n -e '/Post count for/,$p' $name | head -n 2 | tail -n 1 | tr -d " \t\n\r")
+				head=$((head+1))
+					count=$((count-1))
+				result="$temphold$part2"
+				echo $result >> $nametxt
+				rm $name
+						done
+	fi
+	else
+		echo $errorinput
+	fi
+	
+        echo "Script complete! Closing in 5."
+		sleep 5
+		exit
+		
