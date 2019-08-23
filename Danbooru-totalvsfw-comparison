@@ -60,11 +60,10 @@ echo "Script by JasperTecHK, find it on my github!"
 	read sel
 	if ! [[ $sel =~ $inputchk ]]; then
 		echo $errorinput
-	fi
 	elif [ $sel -eq "1" ]; then
 		while [ $count -ne "0" ]
 		do
-							echo "You have $count tag(s) left."
+							echo -ne "You have $count tag(s) left."\\r
 							name=$(cat $list | head -n $head | tail -n 1 | sed $'s/\r//')
 							url="https://danbooru.donmai.us/counts/posts?tags="
 				urlt="$url$name"
@@ -84,23 +83,22 @@ echo "Script by JasperTecHK, find it on my github!"
 				echo $result >> $nametxt
 				rm $name
 						done
-	fi
 	elif [ $sel -eq "0" ]; then
 		while [ $count -ne "0" ]
 		do
-							echo "You have $count tag(s) left."
+							echo -ne "You have $count tag(s) left."\\r
 							name=$(cat $list | head -n $head | tail -n 1 | sed $'s/\r//')
 							url="https://danbooru.donmai.us/counts/posts?tags="
 				urlt="$url$name"
 				urlexe="$urlt$end"
 							wget -q -O $name $urlexe
-							sleep 2.5
+							#sleep 2.5
 					part1=$(sed -n -e '/Post count for/,$p' $name | head -n 2 | tail -n 1 | tr -d " \t\n\r")
 				temphold="$part1$comma"
 				urlextent=""+rating:s""
 				urltt="$urlexe$urlextent"
 							wget -q -O $name $urltt
-							sleep 2.5
+							#sleep 2.5
 					part2=$(sed -n -e '/Post count for/,$p' $name | head -n 2 | tail -n 1 | tr -d " \t\n\r")
 				head=$((head+1))
 					count=$((count-1))
@@ -108,12 +106,10 @@ echo "Script by JasperTecHK, find it on my github!"
 				echo $result >> $nametxt
 				rm $name
 						done
-	fi
 	else
 		echo $errorinput
 	fi
-	
         echo "Script complete! Closing in 5."
 		sleep 5
-		exit
-		
+		trap "echo This process took $SECONDS seconds!" exit
+
