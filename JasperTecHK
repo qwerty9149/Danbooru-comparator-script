@@ -56,7 +56,7 @@ echo "Let's start."
 	count=$((count+1))
        	while [ $count -ne "0" ]
 	 do
-                        echo $count 
+                        echo "You have $count tag(s) left."
                         name=$(cat $list | head -n $head | tail -n 1 | sed $'s/\r//')
                         url="https://danbooru.donmai.us/counts/posts?tags="
 			urlt="$url$name"
