@@ -51,9 +51,7 @@ echo "Script by JasperTecHK, find it on my github!"
                         fi
                         done
         count=$(wc -l < "$list")
-        headoff="0"
         head="1"
-	i="1"
 	comma=","
 	count=$((count+1))
         echo "Verbose mode? 1 for Yes."
@@ -109,7 +107,6 @@ echo "Script by JasperTecHK, find it on my github!"
 	else
 		echo $errorinput
 	fi
-        echo "Script complete! Closing in 5."
+        echo "Script completed in $SECONDS seconds! Closing in 5."
 		sleep 5
-		trap "echo This process took $SECONDS seconds!" exit
-
+		exit
