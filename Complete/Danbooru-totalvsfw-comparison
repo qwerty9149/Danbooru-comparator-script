@@ -1,0 +1,130 @@
+#!/bin/bash
+echo "Script start!"
+echo "Script by JasperTecHK, find it on my github!"
+        Init="1"
+        while [ $Init -ne "0" ]
+                do
+                echo "Which list do you want to scour?"
+				cat Options1
+                read sel
+                        inputchk='^[0-9]+$'
+                        errorinput="Error, Error! Check your code first, dummy!"
+                        if ! [[ $sel =~ $inputchk ]]; then
+                        echo $errorinput
+
+                        elif [ $sel -eq "1" ]; then
+                                echo "You have selected Kantai Collection, correct? 1 for yes."
+                                read sel
+                                if ! [[ $sel =~ $inputchk ]]; then
+                                echo $errorinput
+                                elif [ $sel -eq "1" ]; then
+                                list="kantaiurl"
+                                end="_(kantai_collection)"
+                                Init="0"
+				nametxt="Kantai.csv"
+                                fi
+
+                        elif [ $sel -eq "2" ]; then
+                                echo "You have selected Azur Lane, correct? 1 for yes."
+                                read sel
+                                if ! [[ $sel =~ $inputchk ]]; then
+                                echo $errorinput
+                                elif [ $sel -eq "1" ]; then
+                                list="azurlaneurl"
+                                end="_(azur_lane)"
+                                Init="0"
+				nametxt="Azur.csv"
+                                fi
+
+                        elif [ $sel -eq "3" ]; then
+                                echo "You have selected Touhou, correct? 1 for yes."
+                                read sel
+                                if ! [[ $sel =~ $inputchk ]]; then
+                                echo $errorinput
+                                elif [ $sel -eq "1" ]; then
+                                list="touhouurl"
+                                end=""
+                                Init="0"
+				nametxt="Touhou.csv"
+                                fi
+                        else
+                                echo "Unsupported option. Check if you have implemented it yet, dummy..."
+                        fi
+                        done
+	echo "Confirmed."
+	if [ -f $nametxt ]; then
+		rm $nametxt
+	fi
+        count=$(wc -l < "$list")
+        head="1"
+	comma=","
+	count=$((count+1))
+	url="https://danbooru.donmai.us/counts/posts?tags="
+        echo "Verbose mode? 1 for Yes."
+	read sel
+	if ! [[ $sel =~ $inputchk ]]; then
+		echo $errorinput
+	elif [ $sel -eq "1" ]; then
+		while [ $count -ne "0" ]
+		do
+			echo -ne "You have $count tag(s) left."\\r
+			name=$(cat $list | head -n $head | tail -n 1 | sed $'s/\r//')
+				urlt="$url$name"
+				urlexe="$urlt$end"
+				loop="0"
+					while [ $loop -ne "2" ]
+					do
+					wget -O $name $urlexe
+					result=$(sed -n -e '/Post count for/,$p' $name | head -n 2 | tail -n 1 | tr -d " \t\n\r")
+						if [ $loop -eq "0" ]; then
+							temphold="$result$comma"
+							urltemp=""+rating:s""
+							urlexe="$urlexe$urltemp"
+						else
+							head=$((head+1))
+							count=$((count-1))
+							result="$temphold$result"
+							echo $result >> $nametxt
+							rm $name
+						fi
+				loop=$(($loop+1))
+					done
+		done
+	elif [ $sel -eq "0" ]; then
+		while [ $count -ne "0" ]
+		do
+			echo -ne "You have $count tag(s) left."\\r
+			name=$(cat $list | head -n $head | tail -n 1 | sed $'s/\r//')
+				urlt="$url$name"
+				urlexe="$urlt$end"
+				loop="0"
+					while [ $loop -ne "2" ]
+					do
+					wget -q -O $name $urlexe
+					result=$(sed -n -e '/Post count for/,$p' $name | head -n 2 | tail -n 1 | tr -d " \t\n\r")
+						if [ $loop -eq "0" ]; then
+							temphold="$result$comma"
+							urltemp=""+rating:s""
+							urlexe="$urlexe$urltemp"
+						else
+							head=$((head+1))
+							count=$((count-1))
+							result="$temphold$result"
+							echo $result >> $nametxt
+							rm $name
+						fi
+				loop=$(($loop+1))
+					done
+		done
+	else
+		echo $errorinput
+	fi
+		exit="5"
+		while [ $exit -ne "0" ]
+		do
+			echo "Script completed in $SECONDS seconds! Closing in $exit ."
+			sleep 1
+			exit=$((exit-1))
+		done
+exit
+
