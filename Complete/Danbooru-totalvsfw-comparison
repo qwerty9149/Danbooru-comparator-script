@@ -1,70 +1,89 @@
 #!/bin/bash
 echo "Script start!"
 echo "Script by JasperTecHK, find it on my github!"
+exec 2>/dev/null
         Init="1"
         while [ $Init -ne "0" ]
                 do
                 echo "Which list do you want to scour?"
 				cat Options1
-                read sel
-                        inputchk='^[0-9]+$'
+                read -sn 1 sel
+                        inputnochk='^[0-9]+$'
                         errorinput="Error, Error! Check your code first, dummy!"
-                        if ! [[ $sel =~ $inputchk ]]; then
+			rechoice="Fine, returning to start!"
+                        if ! [[ $sel =~ $inputnochk ]]; then
                         echo $errorinput
-
                         elif [ $sel -eq "1" ]; then
-                                echo "You have selected Kantai Collection, correct? 1 for yes."
-                                read sel
-                                if ! [[ $sel =~ $inputchk ]]; then
+                                echo "You have selected Kantai Collection, correct? Y/N"
+                                read -sn 1 sel
+                                if  [[ $sel =~ $inputnochk ]]; then
                                 echo $errorinput
-                                elif [ $sel -eq "1" ]; then
+                                elif [[ $sel = *"Y"* ]] || [[ $sel = *"y"* ]]; then
                                 list="kantaiurl"
                                 end="_(kantai_collection)"
                                 Init="0"
 				nametxt="Kantai.csv"
+				elif [[ $sel = *"N"* ]] || [[ $sel = *"n"* ]]; then
+				echo $rechoice
+				else
+				echo $errorinput
                                 fi
 
                         elif [ $sel -eq "2" ]; then
-                                echo "You have selected Azur Lane, correct? 1 for yes."
-                                read sel
-                                if ! [[ $sel =~ $inputchk ]]; then
+                                echo "You have selected Azur Lane, correct? Y/N"
+                                read -sn 1 sel
+                                if [[ $sel =~ $inputchk ]]; then
                                 echo $errorinput
-                                elif [ $sel -eq "1" ]; then
+                                elif [[ $sel = *"Y"* ]] || [[ $sel = *"y"* ]]; then
                                 list="azurlaneurl"
                                 end="_(azur_lane)"
                                 Init="0"
 				nametxt="Azur.csv"
+				elif [[ $sel = *"N"* ]] || [[ $sel = *"n"* ]]; then
+				echo $rechoice
+				else
+				echo $errorinput
                                 fi
 
                         elif [ $sel -eq "3" ]; then
-                                echo "You have selected Touhou, correct? 1 for yes."
-                                read sel
-                                if ! [[ $sel =~ $inputchk ]]; then
+                                echo "You have selected Touhou, correct? Y/N"
+                                read -sn 1 sel
+                                if [[ $sel =~ $inputchk ]]; then
                                 echo $errorinput
-                                elif [ $sel -eq "1" ]; then
+                                elif [[ $sel = *"Y"* ]] || [[ $sel = "y"* ]]; then
                                 list="touhouurl"
                                 end=""
                                 Init="0"
 				nametxt="Touhou.csv"
+				elif [[ $sel = *"N"* ]] || [[ $sel = *"n"* ]]; then
+				echo $rechoice
+				else
+				echo $errorinput
                                 fi
                         else
-                                echo "Unsupported option. Check if you have implemented it yet, dummy..."
+                                echo "Fine, returning to start!"
                         fi
                         done
 	echo "Confirmed."
-	if [ -f $nametxt ]; then
-		rm $nametxt
-	fi
         count=$(wc -l < "$list")
         head="1"
 	comma=","
 	count=$((count+1))
 	url="https://danbooru.donmai.us/counts/posts?tags="
-        echo "Verbose mode? 1 for Yes."
-	read sel
-	if ! [[ $sel =~ $inputchk ]]; then
+	namelocate=($PWD/Csv)
+	if [ ! -d $namelocate ]; then
+		mkdir Csv
+	fi
+	nametxt=($namelocate/$nametxt)
+	if [ -f $nametxt ]; then
+		rm $nametxt
+	fi
+        echo "Verbose mode? Y/N"
+	read -sn 1 sel
+	echo "Confirmed."
+	if [ $sel =~ $inputchk ]; then
 		echo $errorinput
-	elif [ $sel -eq "1" ]; then
+	elif [[ $sel = *"Y"* ]] || [[ $sel = *"y"* ]]; then
 		while [ $count -ne "0" ]
 		do
 			echo -ne "You have $count tag(s) left."\\r
@@ -90,7 +109,7 @@ echo "Script by JasperTecHK, find it on my github!"
 				loop=$(($loop+1))
 					done
 		done
-	elif [ $sel -eq "0" ]; then
+	elif [ $sel = "N" ] || [ $sel = "n" ]; then
 		while [ $count -ne "0" ]
 		do
 			echo -ne "You have $count tag(s) left."\\r
