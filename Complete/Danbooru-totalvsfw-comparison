@@ -9,7 +9,7 @@ exec 2>/dev/null
 				cat Options1
                 read -sn 1 sel
                         inputnochk='^[0-9]+$'
-                        errorinput="Error, Error! Check your code first, dummy!"
+                        errorinput="Error, Error! That's not allowed, dummy!"
 			rechoice="Fine, returning to start!"
                         if ! [[ $sel =~ $inputnochk ]]; then
                         echo $errorinput
