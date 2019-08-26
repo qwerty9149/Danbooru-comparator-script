@@ -120,11 +120,13 @@ echo "Script by JasperTecHK, find it on my github!"
 		echo $errorinput
 	fi
 		ttd=$SECONDS
-		exit="5"
-		while [ $exit -ne "0" ]
+		xit="5"
+		endcall="Script completed in $ttd seconds!"
+		while [ $xit -ne "0" ]
 		do
-			echo -ne "Script completed in $ttd seconds! Closing in $exit."\\r
+			echo -ne "$endcall Closing in $xit."\\r
 			sleep 1
-			exit=$((exit-1))
+			xit=$((xit-1))
 		done
+	echo $endcall
 exit
