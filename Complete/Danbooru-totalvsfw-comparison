@@ -9,10 +9,11 @@ exec 2>/dev/null
 				cat Options1
                 read -sn 1 sel
                         inputnochk='^[0-9]+$'
-                        errorinput="Error, Error! That's not allowed, dummy!"
+                        errorinput="Error, Error! Invalid choice, dummy!"
 			rechoice="Fine, returning to start!"
                         if ! [[ $sel =~ $inputnochk ]]; then
                         echo $errorinput
+
                         elif [ $sel -eq "1" ]; then
                                 echo "You have selected Kantai Collection, correct? Y/N"
                                 read -sn 1 sel
@@ -61,7 +62,7 @@ exec 2>/dev/null
 				echo $errorinput
                                 fi
                         else
-                                echo "Fine, returning to start!"
+                                echo "How'd you get yourself here???"
                         fi
                         done
 	echo "Confirmed."
