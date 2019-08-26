@@ -21,18 +21,18 @@ exec 2>/dev/null
                                 	echo "You have selected Kantai Collection, correct? Y/N"
                                 	read -sn 1 sel
                                 	if  [[ $sel =~ $inputnochk ]]; then
-                                	echo $errorinput
+                                		echo $errorinput
                                 	elif [[ $sel = *"Y"* ]] || [[ $sel = *"y"* ]]; then
-                                	list="kantaiurl"
-                                	end="_(kantai_collection)"
-                                	Init="0"
-					nametxt="Kantai.csv"
-					conf="1"
+                                		list="kantaiurl"
+                                		end="_(kantai_collection)"
+                                		Init="0"
+						nametxt="Kantai.csv"
+						conf="1"
 					elif [[ $sel = *"N"* ]] || [[ $sel = *"n"* ]]; then
-					echo $rechoice
-					conf="1"
+						echo $rechoice
+						conf="1"
 					else
-					echo $errorinput
+						echo $errorinput
                                 	fi
 				done
 
@@ -42,18 +42,18 @@ exec 2>/dev/null
 					echo "You have selected Azur Lane, correct? Y/N"
                                 	read -sn 1 sel
                                 	if [[ $sel =~ $inputchk ]]; then
-                                	echo $errorinput
+                                		echo $errorinput
                                 	elif [[ $sel = *"Y"* ]] || [[ $sel = *"y"* ]]; then
-                                	list="azurlaneurl"
-                                	end="_(azur_lane)"
-                                	Init="0"
-					nametxt="Azur.csv"
-					conf="1"
+                                		list="azurlaneurl"
+                                		end="_(azur_lane)"
+                                		Init="0"
+						nametxt="Azur.csv"
+						conf="1"
 					elif [[ $sel = *"N"* ]] || [[ $sel = *"n"* ]]; then
-					echo $rechoice
-					conf="1"
+						echo $rechoice
+						conf="1"
 					else
-					echo $errorinput
+						echo $errorinput
                                 	fi
 				done
 
@@ -63,18 +63,18 @@ exec 2>/dev/null
                                 	echo "You have selected Touhou, correct? Y/N"
                                 	read -sn 1 sel
                                 	if [[ $sel =~ $inputchk ]]; then
-                                	echo $errorinput
+                                		echo $errorinput
                                 	elif [[ $sel = *"Y"* ]] || [[ $sel = "y"* ]]; then
-                                	list="touhouurl"
-                                	end=""
-                                	Init="0"
-					nametxt="Touhou.csv"
-					conf="1"
+                                		list="touhouurl"
+                                		end=""
+                                		Init="0"
+						nametxt="Touhou.csv"
+						conf="1"
 					elif [[ $sel = *"N"* ]] || [[ $sel = *"n"* ]]; then
-					echo $rechoice
-					conf="1"
+						echo $rechoice
+						conf="1"
 					else
-					echo $errorinput
+						echo $errorinput
                                 	fi
 				done
                         else

@@ -1,0 +1,20 @@
+elif [ $sel -eq "optionswhatsleft" ]; then
+	while [ $conf -eq "0" ]
+	do
+		echo "You have selected ###, correct? Y/N"
+		read -sn 1 sel
+		if  [[ $sel =~ $inputnochk ]]; then
+		echo $errorinput
+		elif [[ $sel = *"Y"* ]] || [[ $sel = *"y"* ]]; then
+		list="variablelisturl"
+		end="_(modifieronlink)"
+		Init="0"
+		nametxt="filename.csv"
+		conf="1"
+		elif [[ $sel = *"N"* ]] || [[ $sel = *"n"* ]]; then
+		echo $rechoice
+		conf="1"
+		else
+		echo $errorinput
+		fi
+	done
