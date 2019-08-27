@@ -41,7 +41,7 @@ exec 2>/dev/null
 				do
 					echo "You have selected Azur Lane, correct? Y/N"
                                 	read -sn 1 sel
-                                	if [[ $sel =~ $inputchk ]]; then
+                                	if [[ $sel =~ $inputnochk ]]; then
                                 		echo $errorinput
                                 	elif [[ $sel = *"Y"* ]] || [[ $sel = *"y"* ]]; then
                                 		list="azurlaneurl"
@@ -62,9 +62,9 @@ exec 2>/dev/null
 				do
                                 	echo "You have selected Touhou, correct? Y/N"
                                 	read -sn 1 sel
-                                	if [[ $sel =~ $inputchk ]]; then
+                                	if [[ $sel =~ $inputnochk ]]; then
                                 		echo $errorinput
-                                	elif [[ $sel = *"Y"* ]] || [[ $sel = "y"* ]]; then
+                                	elif [[ $sel = *"Y"* ]] || [[ $sel = *"y"* ]]; then
                                 		list="touhouurl"
                                 		end=""
                                 		Init="0"
@@ -164,5 +164,5 @@ exec 2>/dev/null
 			sleep 1
 			xit=$((xit-1))
 		done
-	echo $endcall
+	echo ""
 exit
