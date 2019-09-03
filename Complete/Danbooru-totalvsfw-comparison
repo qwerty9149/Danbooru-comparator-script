@@ -2,92 +2,66 @@
 echo "Script start!"
 echo "Script by JasperTecHK, find it on my github!"
 exec 2>/dev/null
-        Init="1"
-        while [ $Init -ne "0" ]
+        Init="1" 
+        finalchk () {
+		while ! [ $conf = "Y" ] 
+			do
+				echo "You have selected $call, correct? Y/N"
+				read -sn 1 sel
+			if [[ $sel =~ $inputnochk ]]; then
+                        	 echo $errorinput
+                   	elif [[ $sel = *"Y"* ]] || [[ $sel = *"y"* ]]; then
+				conf="Y"
+				Init="0"
+				echo "Confirmed"
+			elif [[ $sel = *"N"* ]] || [[ $sel = *"n"* ]]; then
+				echo $rechoice
+				conf="Y"
+			else
+				echo $errorinput
+			fi
+		done
+			}
+	while [ $Init -ne "0" ]
                 do
                 echo "Which list do you want to scour?"
-				cat Options1
+			cat Options1
                 read -sn 1 sel
-                        inputnochk='^[0-9]+$'
-                        errorinput="Error, Error! Invalid choice, dummy!"
-			rechoice="Fine, returning to start!"
-			conf="0"
-                        if ! [[ $sel =~ $inputnochk ]]; then
-                        echo $errorinput
-
+		inputnochk='^[0-9]+$'
+                errorinput="Error, Error! Invalid choice, dummy!" 
+		rechoice="Fine, returning to start!" 
+		conf="n"
+                if ! [[ $sel =~ $inputnochk ]]; then
+			echo $errorinput
                         elif [ $sel -eq "1" ]; then
-				while [ $conf -eq "0" ]
-				do
-                                	echo "You have selected Kantai Collection, correct? Y/N"
-                                	read -sn 1 sel
-                                	if  [[ $sel =~ $inputnochk ]]; then
-                                		echo $errorinput
-                                	elif [[ $sel = *"Y"* ]] || [[ $sel = *"y"* ]]; then
-                                		list="kantaiurl"
-                                		end="_(kantai_collection)"
-                                		Init="0"
-						nametxt="Kantai.csv"
-						conf="1"
-					elif [[ $sel = *"N"* ]] || [[ $sel = *"n"* ]]; then
-						echo $rechoice
-						conf="1"
-					else
-						echo $errorinput
-                                	fi
-				done
-
+				list="kantaiurl"
+				end="_(kantai_collection)"
+				nametxt="Kantai.csv"
+				call="Kantai Collection"
                         elif [ $sel -eq "2" ]; then
-                                while [ $conf -eq "0" ]
-				do
-					echo "You have selected Azur Lane, correct? Y/N"
-                                	read -sn 1 sel
-                                	if [[ $sel =~ $inputnochk ]]; then
-                                		echo $errorinput
-                                	elif [[ $sel = *"Y"* ]] || [[ $sel = *"y"* ]]; then
-                                		list="azurlaneurl"
-                                		end="_(azur_lane)"
-                                		Init="0"
-						nametxt="Azur.csv"
-						conf="1"
-					elif [[ $sel = *"N"* ]] || [[ $sel = *"n"* ]]; then
-						echo $rechoice
-						conf="1"
-					else
-						echo $errorinput
-                                	fi
-				done
-
-                        elif [ $sel -eq "3" ]; then
-				while [ $conf -eq "0" ]
-				do
-                                	echo "You have selected Touhou, correct? Y/N"
-                                	read -sn 1 sel
-                                	if [[ $sel =~ $inputnochk ]]; then
-                                		echo $errorinput
-                                	elif [[ $sel = *"Y"* ]] || [[ $sel = *"y"* ]]; then
-                                		list="touhouurl"
-                                		end=""
-                                		Init="0"
-						nametxt="Touhou.csv"
-						conf="1"
-					elif [[ $sel = *"N"* ]] || [[ $sel = *"n"* ]]; then
-						echo $rechoice
-						conf="1"
-					else
-						echo $errorinput
-                                	fi
-				done
+         			list="azurlaneurl"
+				end="_(azur_lane)"
+				nametxt="Azur.csv"
+				call="Azur Lane"
+			elif [ $sel -eq "3" ]; then
+				list="touhouurl"
+				end=""
+				nametxt="Touhou.csv"
+				call="Touhou"
                         else
-                                echo "How'd you get yourself here???"
+				echo "Wait. We haven't set this one up yet."
                         fi
-                        done
-	echo "Confirmed."
+			# if [ $sel -eq "0" ]; then
+				#placeholder text.
+			#else
+				finalchk
+			#fi
+	done
         count=$(wc -l < "$list")
         head="1"
-	comma=","
 	count=$((count+1))
 	url="https://danbooru.donmai.us/counts/posts?tags="
-	namelocate=($PWD/Csv)
+	namelocate="$PWD/Csv"
 	if [ ! -d $namelocate ]; then
 		mkdir Csv
 	fi
@@ -97,10 +71,11 @@ exec 2>/dev/null
 	fi
         echo "Verbose mode? Y/N"
 	read -sn 1 sel
-	echo "Confirmed."
+	ttd=$SECONDS
 	if [ $sel =~ $inputchk ]; then
 		echo $errorinput
 	elif [[ $sel = *"Y"* ]] || [[ $sel = *"y"* ]]; then
+		echo "Confirmed."
 		while [ $count -ne "0" ]
 		do
 			echo -ne "You have $count tag(s) left."\\r
@@ -113,9 +88,8 @@ exec 2>/dev/null
 					wget -O $name $urlexe
 					result=$(sed -n -e '/Post count for/,$p' $name | head -n 2 | tail -n 1 | tr -d " \t\n\r")
 						if [ $loop -eq "0" ]; then
-							temphold="$result$comma"
-							urltemp=""+rating:s""
-							urlexe="$urlexe$urltemp"
+							temphold="$result,"
+							urlexe="$urlexe"+rating:s""
 						else
 							head=$((head+1))
 							count=$((count-1))
@@ -127,6 +101,7 @@ exec 2>/dev/null
 					done
 		done
 	elif [ $sel = "N" ] || [ $sel = "n" ]; then
+		echo "Confirmed"
 		while [ $count -ne "0" ]
 		do
 			echo -ne "You have $count tag(s) left."\\r
@@ -139,9 +114,8 @@ exec 2>/dev/null
 					wget -q -O $name $urlexe
 					result=$(sed -n -e '/Post count for/,$p' $name | head -n 2 | tail -n 1 | tr -d " \t\n\r")
 						if [ $loop -eq "0" ]; then
-							temphold="$result$comma"
-							urltemp=""+rating:s""
-							urlexe="$urlexe$urltemp"
+							temphold="$result,"
+							urlexe="$urlexe"+ratings:s""
 						else
 							head=$((head+1))
 							count=$((count-1))
@@ -155,7 +129,7 @@ exec 2>/dev/null
 	else
 		echo $errorinput
 	fi
-		ttd=$SECONDS
+		ttd=$(($SECONDS-$ttd)) 
 		xit="5"
 		endcall="Script completed in $ttd seconds!"
 		while [ $xit -ne "0" ]
