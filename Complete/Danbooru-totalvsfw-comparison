@@ -1,16 +1,16 @@
 #!/bin/bash
 echo "Script start!"
 echo "Script by JasperTecHK, find it on my github!"
-exec 2>/dev/null
-        Init="1" 
+#exec 2>/dev/null #this has been deprecated. There shouldn't be any errors to garbage-ify. 
+        Init="1" #Used for initialization loop confirmation
         finalchk () {
-		while ! [ $conf = "Y" ] 
+		while ! [ $conf = "Y" ]
 			do
 				echo "You have selected $call, correct? Y/N"
 				read -sn 1 sel
 			if [[ $sel =~ $inputnochk ]]; then
-                        	 echo $errorinput
-                   	elif [[ $sel = *"Y"* ]] || [[ $sel = *"y"* ]]; then
+				echo $errorinput
+			elif [[ $sel = *"Y"* ]] || [[ $sel = *"y"* ]]; then
 				conf="Y"
 				Init="0"
 				echo "Confirmed"
@@ -21,25 +21,25 @@ exec 2>/dev/null
 				echo $errorinput
 			fi
 		done
-			}
-	while [ $Init -ne "0" ]
+			} #Final verification of choice on list scrapeing.
+	while [ $Init -ne "0" ] #here, this loop checks which url group to read.
                 do
                 echo "Which list do you want to scour?"
 			cat Options1
                 read -sn 1 sel
 		inputnochk='^[0-9]+$'
-                errorinput="Error, Error! Invalid choice, dummy!" 
-		rechoice="Fine, returning to start!" 
+                errorinput="Error, Error! Invalid choice, dummy!"
+		rechoice="Fine, returning to start!"
 		conf="n"
                 if ! [[ $sel =~ $inputnochk ]]; then
 			echo $errorinput
-                        elif [ $sel -eq "1" ]; then
+                        elif [ $sel -eq "1" ]; then # change these as required. example given in selectiontemplate.
 				list="kantaiurl"
 				end="_(kantai_collection)"
 				nametxt="Kantai.csv"
 				call="Kantai Collection"
                         elif [ $sel -eq "2" ]; then
-         			list="azurlaneurl"
+				list="azurlaneurl"
 				end="_(azur_lane)"
 				nametxt="Azur.csv"
 				call="Azur Lane"
@@ -51,17 +51,17 @@ exec 2>/dev/null
                         else
 				echo "Wait. We haven't set this one up yet."
                         fi
-			# if [ $sel -eq "0" ]; then
+			# if [ $sel -eq "0" ]; then #Here, this is just for future, when you need more than 9 options.
 				#placeholder text.
 			#else
 				finalchk
 			#fi
 	done
-        count=$(wc -l < "$list")
-        head="1"
+        count=$(wc -l < "$list") # counts how many there are to do. It miscounts by one, so it will be added later. Also I know for loops work here. I just can't be bothered to modify it to do so.
+        head="1" # just for grabbing the next one on the list.
 	count=$((count+1))
-	url="https://danbooru.donmai.us/counts/posts?tags="
-	namelocate="$PWD/Csv"
+	url="https://danbooru.donmai.us/counts/posts?tags=" #Used as a template. After all, this is DAnbooru counting. where else would you find this specific scenario?
+	namelocate="$PWD/Csv" #where the results are stored, in Csv form.
 	if [ ! -d $namelocate ]; then
 		mkdir Csv
 	fi
@@ -69,13 +69,8 @@ exec 2>/dev/null
 	if [ -f $nametxt ]; then
 		rm $nametxt
 	fi
-        echo "Verbose mode? Y/N"
-	read -sn 1 sel
-	ttd=$SECONDS
-	if [ $sel =~ $inputchk ]; then
-		echo $errorinput
-	elif [[ $sel = *"Y"* ]] || [[ $sel = *"y"* ]]; then
-		echo "Confirmed."
+	compute() {
+		echo "Confirmed"
 		while [ $count -ne "0" ]
 		do
 			echo -ne "You have $count tag(s) left."\\r
@@ -85,7 +80,7 @@ exec 2>/dev/null
 				loop="0"
 					while [ $loop -ne "2" ]
 					do
-					wget -O $name $urlexe
+					grab
 					result=$(sed -n -e '/Post count for/,$p' $name | head -n 2 | tail -n 1 | tr -d " \t\n\r")
 						if [ $loop -eq "0" ]; then
 							temphold="$result,"
@@ -100,37 +95,33 @@ exec 2>/dev/null
 				loop=$(($loop+1))
 					done
 		done
-	elif [ $sel = "N" ] || [ $sel = "n" ]; then
-		echo "Confirmed"
-		while [ $count -ne "0" ]
-		do
-			echo -ne "You have $count tag(s) left."\\r
-			name=$(cat $list | head -n $head | tail -n 1 | sed $'s/\r//')
-				urlt="$url$name"
-				urlexe="$urlt$end"
-				loop="0"
-					while [ $loop -ne "2" ]
-					do
-					wget -q -O $name $urlexe
-					result=$(sed -n -e '/Post count for/,$p' $name | head -n 2 | tail -n 1 | tr -d " \t\n\r")
-						if [ $loop -eq "0" ]; then
-							temphold="$result,"
-							urlexe="$urlexe"+ratings:s""
-						else
-							head=$((head+1))
-							count=$((count-1))
-							result="$temphold$result"
-							echo $result >> $nametxt
-							rm $name
-						fi
-				loop=$(($loop+1))
-					done
-		done
+		} # looping request for the before/after filter. only reason why this exists is for the verbose mode.
+		conf="n" # again, used to kick the choice out of the loop.
+	while ! [ $conf = "Y" ]
+	do
+	  echo "Verbose mode? Y/N"
+	read -sn 1 sel
+	ttd=$SECONDS #cool little extra. used to see how long the script took to calculate all the results.
+	if [[ $sel =~ $inputnochk ]]; then
+		echo $errorinput
+	elif [[ $sel = *"Y"* ]] || [[ $sel = *"y"* ]]; then
+		conf="Y"
+		grab() {
+		wget -O $name $urlexe
+		}
+		compute
+	elif [[ $sel = *"N"* ]] || [[ $sel = *"n"* ]]; then
+		conf="Y"
+		grab() {
+		wget -q -O $name $urlexe
+		}
+		compute
 	else
 		echo $errorinput
 	fi
-		ttd=$(($SECONDS-$ttd)) 
-		xit="5"
+	done
+		ttd=$(($SECONDS-$ttd)) # now, from the two times, give me the operation time sans user input delay!
+		xit="5" # might not be truly 5 seconds, but I hope the drift isn't noticible enough.
 		endcall="Script completed in $ttd seconds!"
 		while [ $xit -ne "0" ]
 		do
