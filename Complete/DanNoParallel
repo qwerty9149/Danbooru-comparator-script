@@ -1,0 +1,78 @@
+#!/bin/bash
+	#Defining all the Vars
+#	count=$(wc -l < "$list") # counts how many there are to do. It miscounts by one, so it will be added later. Also I know for loops work here. I just can't be bothered to modify it to do so.
+    head="1" # just for grabbing the next one on the list.
+	count=$((count+1))
+	conf="N" # again, used to kick the choice out of the loop.
+	inputnochk='^[0-9]+$'
+	xit="5" # might not be truly 5 seconds, but I hope the drift isn't noticible enough.
+
+	#Defining all the loops
+	compute() {
+		echo "Confirmed"
+		ttd=$SECONDS #cool little extra. used to see how long the script took to calculate all the results.
+		while [ $count -ne "0" ]
+		do
+			echo -ne "You have $count tag(s) left."\\r
+			name=$(cat $list | head -n $head | tail -n 1 | sed $'s/\r//')
+				urlt="$url$name"
+				if [[ $end = "" ]]; then
+					urlexe="$urlt"
+				else
+					urlexe=""$urlt"_"$end""
+				fi
+				loop="0"
+					while [ $loop -ne "2" ]
+					do
+					grab
+					result=$(sed -n -e '/Post count for/,$p' $name | head -n 2 | tail -n 1 | tr -d " \t\n\r")
+						if [ $loop -eq "0" ]; then
+							temphold="$result,"
+							urlexe="$urlexe"+rating:s""
+						else
+							head=$((head+1))
+							count=$((count-1))
+							result="$temphold$result"
+							echo $result >> "$nametxt"
+							rm $name
+						fi
+				loop=$(($loop+1))
+					done
+#		count=$(count-1)
+		done
+		ttd=$(($SECONDS-$ttd)) # now, from the two times, give me the operation time sans user input delay!
+		} # looping request for the before/after filter. only reason why this exists is for the verbose mode.
+		conf="n" # again, used to kick the choice out of the loop.
+
+	#Begin Script
+	while ! [ $conf = "Y" ]
+	do
+	  echo "Verbose mode? Y/N"
+	read -sn 1 sel
+	if [[ $sel =~ $inputnochk ]]; then
+		echo $errorinput
+	elif [[ $sel = *"Y"* ]] || [[ $sel = *"y"* ]]; then
+		conf="Y"
+		grab() {
+		wget -O $name $urlexe
+		}
+		compute
+	elif [[ $sel = *"N"* ]] || [[ $sel = *"n"* ]]; then
+		conf="Y"
+		grab() {
+		wget -q -O $name $urlexe
+		}
+		compute
+	else
+		echo $errorinput
+	fi
+	done
+	endcall="Script completed in $ttd seconds!"
+		while [ $xit -ne "0" ]
+		do
+			echo -ne "$endcall Closing in $xit."\\r
+			sleep 1
+			xit=$((xit-1))
+		done
+	echo ""
+exit

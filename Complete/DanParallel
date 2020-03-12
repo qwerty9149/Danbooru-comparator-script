@@ -1,0 +1,51 @@
+#!/bin/bash
+
+#Defining Functions
+	sleep 3
+	compute () {
+		curl -s $1 | sed -n -e '/Post count for/,$p' | head -n 2 | tail -n 1 | tr -d " \t\n\r" #>> maphold
+	}
+
+	process () {
+	cat temp | parallel --bar -v -k compute
+	}
+	trigger () {
+	process >> Hold
+	sed 's/compute.*//' Hold >> $filehold
+#	sed -i '1,1d' $filehold
+	sed -e 's/$/+rating:s/' -i temp
+	echo "" > Hold
+	}
+	export -f compute
+	export -f process
+	export -f trigger
+
+#Start Script
+	ttd=$SECONDS
+	Names=()	#Clearing all arrays of past data. May not be nescessary?
+	Impure=()
+	Pure=()
+	mapfile -t Names < $list		#Finally figured out Arrays, i think.
+	for ((i=0; i<$count; i++))		#Finally got for loops working!
+	do
+	echo ""$url${Names[$i]}"_"$end"" >> temp
+	done
+	filehold="Impure"
+	trigger
+	sed -i '1,1d' Impure
+	filehold="Pure"
+	trigger
+	sed -i '1,2d' Pure
+	mapfile -t Impure < Impure
+	mapfile -t Pure < Pure
+	for ((i=0; i<$count; i++))
+	do
+	echo ""${Names[$i]}","${Impure[$i]}","${Pure[$i]}"" >> $nametxt
+	done
+	ttd=$(($SECONDS-$ttd))
+	echo "Script completed in $ttd seconds."
+	rm temp
+	rm Hold
+	rm Impure
+	rm Pure
+	sleep 3

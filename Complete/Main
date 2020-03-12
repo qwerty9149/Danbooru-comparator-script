@@ -1,0 +1,119 @@
+#!/bin/bash
+echo "Script start!"
+echo "Script by JasperTecHK, find it on my github!"
+#exec 2>/dev/null #this has been deprecated. There shouldn't be any errors to garbage-ify.
+        # Defining all the Variables
+		Init="1" #Used for initialization loop confirmation
+        	errorinput="Error, Error! Invalid choice, dummy!" #ErrorMessage
+		inputnochk='^[0-9]+$'	#NumberFilter
+		rechoice="Fine, returning to start!"	#Reload
+		url="https://danbooru.donmai.us/counts/posts?tags=" #Used as a template. After all, this is DAnbooru counting. where else would you find this specific scenario?
+		namelocate="" #where the results are stored, in Csv form.
+		nametxt="" #checks if previous file exists
+		conf="N"
+		choice=$1
+
+		# Defining all the Functions
+		Dirscan () {
+		while [[ $Init -ne "0" ]] #here, this loop checks which url group to read.
+			do
+				echo "Which list do you want to scour?"
+				cat Options1
+				conf="N"
+				read -sn 1 sel
+				OptionsMenu
+			done
+		}
+
+		OptionsMenu () {
+		if ! [[ $sel =~ $inputnochk ]]; then
+				echo $errorinput
+        	elif [[ $sel = "1" ]] || [[ $choice = "kantaiurl" ]]; then 	#change these as required. example given in selectiontemplate.
+				list="kantaiurl"			#name of file to grab
+				end="(kantai_collection)"	#url-ender
+				nametxt="Kantai.csv"		#name of file to save to
+				call="Kantai Collection"	#confirmation message above
+        	elif [[ $sel = "2" ]] || [[ $choice = "azurlaneurl" ]]; then
+				list="azurlaneurl"
+				end="(azur_lane)"
+				nametxt="Azur.csv"
+				call="Azur Lane"
+		elif [[ $sel = "3" ]] || [[ $choice = "touhouurl" ]]; then
+				list="touhouurl"
+				end=""
+				nametxt="Touhou.csv"
+				call="Touhou"
+            	else
+				echo "Wait. That isn't set up yet."
+            	fi
+			# if [ $sel -eq "0" ]; then #Here, this is just for future, when you need more than 9 options.
+				#placeholder text.
+			#else
+				finalchk
+			#fi
+		}
+
+		finalchk () {
+		while ! [[ $conf = "Y" ]]
+			do
+				echo "You have selected $call, correct? Y/N"
+				read -sn 1 sel
+			if [[ $sel =~ $inputnochk ]]; then
+				echo $errorinput
+			elif [[ $sel = *"Y"* ]] || [[ $sel = *"y"* ]]; then
+				conf="Y"
+				Init="0"
+				echo "Confirmed"
+			elif [[ $sel = *"N"* ]] || [[ $sel = *"n"* ]]; then
+				echo $rechoice
+				conf="Y"
+			else
+				echo $errorinput
+			fi
+		done
+			if [[ $sel = "0" ]]; then
+				Dirscan
+			fi
+			} #Final verification of choice on list scraping.
+
+		EnvCheck () {
+			if [[ ! -d Csv ]]; then
+				mkdir Csv
+			fi
+				nametxt="Csv/$nametxt"
+			if [[ -f $nametxt ]]; then
+				rm $nametxt
+			fi
+		}	#Environment Check
+
+		Passthrough () {
+		list="url/$list"
+		count=$(wc -l < "$list")
+		export count
+		export list
+		export end
+		export nametxt
+		export url
+		}	#Passthrough Vars to sub-script
+
+		#Begin Script
+		if [[ -z $1 ]]; then
+			Dirscan
+		elif [[ ! -f url/$choice ]]; then
+			echo -ne "Invalid file chosen. Aborting."\\r
+			echo""
+			sleep 2
+			exit
+		else
+			sel="0"
+			OptionsMenu
+		fi
+
+		EnvCheck
+		Passthrough
+	if [[ -x "$(command -v parallel)" ]]; then
+		./DanParallel
+	else
+		./DanNoParallel
+	fi
+exit
