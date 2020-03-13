@@ -3,7 +3,7 @@
 #Defining Functions
 	sleep 3
 	compute () {
-		curl -s $1 | sed -n -e '/Post count for/,$p' | head -n 2 | tail -n 1 | tr -d " \t\n\r" #>> maphold
+		curl -s $1 | sed -n -e '/Post count for/,$p' | head -n 2 | tail -n 1 | tr -d " \t\n\r"
 	}
 
 	process () {
@@ -12,7 +12,6 @@
 	trigger () {
 	process >> Hold
 	sed 's/compute.*//' Hold >> $filehold
-#	sed -i '1,1d' $filehold
 	sed -e 's/$/+rating:s/' -i temp
 	echo "" > Hold
 	}
@@ -25,6 +24,7 @@
 	Names=()	#Clearing all arrays of past data. May not be nescessary?
 	Impure=()
 	Pure=()
+	count=$(($count+1))
 	mapfile -t Names < $list		#Finally figured out Arrays, i think.
 	for ((i=0; i<$count; i++))		#Finally got for loops working!
 	do
@@ -43,7 +43,7 @@
 	echo ""${Names[$i]}","${Impure[$i]}","${Pure[$i]}"" >> $nametxt
 	done
 	ttd=$(($SECONDS-$ttd))
-	echo "Script completed in $ttd seconds."
+	echo "Script completed in $ttd seconds!"
 	rm temp
 	rm Hold
 	rm Impure

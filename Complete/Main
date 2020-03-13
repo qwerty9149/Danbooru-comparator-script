@@ -4,10 +4,10 @@ echo "Script by JasperTecHK, find it on my github!"
 #exec 2>/dev/null #this has been deprecated. There shouldn't be any errors to garbage-ify.
         # Defining all the Variables
 		Init="1" #Used for initialization loop confirmation
-        	errorinput="Error, Error! Invalid choice, dummy!" #ErrorMessage
+        errorinput="Error, Error! Invalid choice, dummy!" #ErrorMessage
 		inputnochk='^[0-9]+$'	#NumberFilter
 		rechoice="Fine, returning to start!"	#Reload
-		url="https://danbooru.donmai.us/counts/posts?tags=" #Used as a template. After all, this is DAnbooru counting. where else would you find this specific scenario?
+		url="https://danbooru.donmai.us/counts/posts?tags=" #Used as a template. After all, this is Danbooru counting. where else would you find this specific scenario?
 		namelocate="" #where the results are stored, in Csv form.
 		nametxt="" #checks if previous file exists
 		conf="N"
