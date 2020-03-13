@@ -20,7 +20,7 @@ echo "Script by JasperTecHK, find it on my github!"
 				echo "Which list do you want to scour?"
 				cat Options1
 				conf="N"
-				read -sn 1 sel
+				read sel
 				OptionsMenu
 			done
 		}
@@ -29,10 +29,10 @@ echo "Script by JasperTecHK, find it on my github!"
 		if ! [[ $sel =~ $inputnochk ]]; then
 				echo $errorinput
         	elif [[ $sel = "1" ]] || [[ $choice = "kantaiurl" ]]; then 	#change these as required. example given in selectiontemplate.
-				list="kantaiurl"			#name of file to grab
-				end="(kantai_collection)"	#url-ender
-				nametxt="Kantai.csv"		#name of file to save to
-				call="Kantai Collection"	#confirmation message above
+				list="kantaiurl"				#name of file to grab
+				end="(kantai_collection)"			#url-ender
+				nametxt="Kantai.csv"				#name of file to save to
+				call="Kantai Collection"			#confirmation message above
         	elif [[ $sel = "2" ]] || [[ $choice = "azurlaneurl" ]]; then
 				list="azurlaneurl"
 				end="(azur_lane)"
@@ -46,11 +46,7 @@ echo "Script by JasperTecHK, find it on my github!"
             	else
 				echo "Wait. That isn't set up yet."
             	fi
-			# if [ $sel -eq "0" ]; then #Here, this is just for future, when you need more than 9 options.
-				#placeholder text.
-			#else
-				finalchk
-			#fi
+			finalchk
 		}
 
 		finalchk () {

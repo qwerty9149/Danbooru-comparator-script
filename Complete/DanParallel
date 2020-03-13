@@ -7,7 +7,7 @@
 	}
 
 	process () {
-	cat temp | parallel --bar -v -k compute
+	cat temp | parallel --bar -v -k compute	#Due to the sensitive nature of the lists grabbed that require the results to come back in a specific order (Thus the whole point of the script...), -k is a hella useful feature! Parallel also seems to nearly scale perfectly with the number of cores you have in your system.
 	}
 	trigger () {
 	process >> Hold
@@ -15,36 +15,40 @@
 	sed -e 's/$/+rating:s/' -i temp
 	echo "" > Hold
 	}
-	export -f compute
+	export -f compute			#Parallel does subscripts per job, it seems. So just exporting all the functions, though realistically, I think I just need to export the compute Function.
 	export -f process
 	export -f trigger
 
 #Start Script
 	ttd=$SECONDS
-	Names=()	#Clearing all arrays of past data. May not be nescessary?
+	Names=()				#Clearing all arrays of past data. May not be necessary?
 	Impure=()
 	Pure=()
 	count=$(($count+1))
 	mapfile -t Names < $list		#Finally figured out Arrays, i think.
 	for ((i=0; i<$count; i++))		#Finally got for loops working!
 	do
-	echo ""$url${Names[$i]}"_"$end"" >> temp
+	if [[ $end = "" ]]; then		#For some reason, it really hates dealing with underscores in variables. It just breaks url generation. So, to combat this, I'm injecting it later inside the subscript itself.
+		echo ""$url${Names[$i]}"" >> temp
+	else
+		echo ""$url${Names[$i]}"_"$end"" >> temp
+	fi
 	done
-	filehold="Impure"
+	filehold="Impure"			#Impure numbers
 	trigger
-	sed -i '1,1d' Impure
-	filehold="Pure"
+	sed -i '1,1d' Impure			#Again, no idea why, but when you have multiple arrays, they seem to keep shifting themselves off by 1 per array generated. This is just to remove the whitespace before final array combination.
+	filehold="Pure"				#Pure numbers
 	trigger
-	sed -i '1,2d' Pure
-	mapfile -t Impure < Impure
+	sed -i '1,2d' Pure			#Read comment above about Arrays.
+	mapfile -t Impure < Impure		#Array Generation for combining.
 	mapfile -t Pure < Pure
-	for ((i=0; i<$count; i++))
+	for ((i=0; i<$count; i++))		#Combining Arrays
 	do
 	echo ""${Names[$i]}","${Impure[$i]}","${Pure[$i]}"" >> $nametxt
 	done
 	ttd=$(($SECONDS-$ttd))
 	echo "Script completed in $ttd seconds!"
-	rm temp
+	rm temp					#Cleanup
 	rm Hold
 	rm Impure
 	rm Pure
