@@ -18,7 +18,7 @@ echo "Script by JasperTecHK, find it on my github!"
 		while [[ $Init -ne "0" ]] #here, this loop checks which url group to read.
 			do
 				echo "Which list do you want to scour?"
-				cat Options1
+				cat Options
 				conf="N"
 				read sel
 				OptionsMenu
@@ -28,6 +28,16 @@ echo "Script by JasperTecHK, find it on my github!"
 		OptionsMenu () {
 		if ! [[ $sel =~ $inputnochk ]]; then
 				echo $errorinput
+		elif [[ $sel = "0" ]]; then
+				echo "Who do you want to search for?"
+				read sel
+				echo $sel | sed -e 's/,\s\+/,/g' | tr " " "_"  |tr "," "\n" |tr -d "^ " >> $PWD/url/customurl
+				truncate -s -1 $PWD/url/customurl
+				customcheck="1"
+				list="customurl"
+				end=""
+				nametxt="Custom.csv"
+				call="Custom"
         	elif [[ $sel = "1" ]] || [[ $choice = "kantaiurl" ]]; then 	#change these as required. example given in selectiontemplate.
 				list="kantaiurl"				#name of file to grab
 				end="(kantai_collection)"			#url-ender
@@ -112,4 +122,8 @@ echo "Script by JasperTecHK, find it on my github!"
 	else
 		./DanNoParallel
 	fi
+#	if [[ $customcheck = "1" ]]; then
+#	rm $PWD/url/customurl
+#	fi
+
 exit

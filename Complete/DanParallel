@@ -21,10 +21,16 @@
 
 #Start Script
 	ttd=$SECONDS
-	Names=()				#Clearing all arrays of past data. May not be necessary?
+	Names=()				#Clearing all arrays of past data. May not be necessary? May be if loading multiple times?
 	Impure=()
 	Pure=()
+	Ratio=()
 	count=$(($count+1))
+	for ((i=0; i<$count; i++))		#Adding in a ratio calculation.
+	do
+	expr $i + 2 >> ratio			#+2 because Array starts at 0, and need to skip the title line.
+	done
+	mapfile -t Ratio < ratio
 	mapfile -t Names < $list		#Finally figured out Arrays, i think.
 	for ((i=0; i<$count; i++))		#Finally got for loops working!
 	do
@@ -42,14 +48,17 @@
 	sed -i '1,2d' Pure			#Read comment above about Arrays.
 	mapfile -t Impure < Impure		#Array Generation for combining.
 	mapfile -t Pure < Pure
+	echo "Name,Total,SFW,Purity %" >> $nametxt
 	for ((i=0; i<$count; i++))		#Combining Arrays
 	do
-	echo ""${Names[$i]}","${Impure[$i]}","${Pure[$i]}"" >> $nametxt
+	echo ""${Names[$i]}","${Impure[$i]}","${Pure[$i]}","=100-\(\(\$B${Ratio[$i]}-\$C${Ratio[i]}\)/\$B${Ratio[$i]}\)*100"" >> $nametxt
 	done
+	sed -i -e 's/^\(.\)/\U\1/' $nametxt	#Fixes Capitalization on each line
 	ttd=$(($SECONDS-$ttd))
 	echo "Script completed in $ttd seconds!"
-	rm temp					#Cleanup
+	rm temp					#Cleanup of temp files
 	rm Hold
 	rm Impure
 	rm Pure
+	rm ratio
 	sleep 3
