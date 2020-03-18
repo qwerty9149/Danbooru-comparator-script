@@ -124,5 +124,5 @@ echo "Script by JasperTecHK, find it on my github!"
 	fi
 	if [[ $customcheck = "1" ]]; then
 	rm $PWD/url/customurl
-
+	fi
 exit
