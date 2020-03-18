@@ -122,8 +122,7 @@ echo "Script by JasperTecHK, find it on my github!"
 	else
 		./DanNoParallel
 	fi
-#	if [[ $customcheck = "1" ]]; then
-#	rm $PWD/url/customurl
-#	fi
+	if [[ $customcheck = "1" ]]; then
+	rm $PWD/url/customurl
 
 exit
