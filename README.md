@@ -12,4 +12,4 @@ nameurl is just the variables that will change. I.e. for example, in Kantai, the
 Options1 is literally just used to make the script look smaller. It holds the options for the initial selection.
 Selectiontemplate is just used when you want to add new options in. Modify the weird bits to suit your needs.
 
-Suggested dependencies to make life easier is GNU parallel and zenity. You don't have to, but it makes things go faster, and look nicer.
+Requires cUrl, suggested to also get GNU Parallel.
