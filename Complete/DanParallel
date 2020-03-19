@@ -11,16 +11,16 @@
 	}
 	trigger () {
 	process >> Hold
-	sed 's/compute.*//' Hold >> $filehold
-	sed -e 's/$/+rating:s/' -i temp
-	echo "" > Hold
+	sed 's/compute.*//' Hold >> $filehold	#Due to the way the script handles stuff, it kinda also exports a lot of junk. This is to clean the results of crap.
+	sed -e 's/$/+rating:s/' -i temp		#Appending the modifier for final loop.
+	echo "" > Hold				#Clearing out the temporary holding file.
 	}
 	export -f compute			#Parallel does subscripts per job, it seems. So just exporting all the functions, though realistically, I think I just need to export the compute Function.
 	export -f process
 	export -f trigger
 
 #Start Script
-	ttd=$SECONDS
+	ttd=$SECONDS				#Timer start.
 	Names=()				#Clearing all arrays of past data. May not be necessary? May be if loading multiple times?
 	Impure=()
 	Pure=()
@@ -42,7 +42,7 @@
 	done
 	filehold="Impure"			#Impure numbers
 	trigger
-	sed -i '1,1d' Impure			#Again, no idea why, but when you have multiple arrays, they seem to keep shifting themselves off by 1 per array generated. This is just to remove the whitespace before final array combination.
+	sed -i '1,1d' Impure			#No idea why, but when you have multiple arrays, they seem to keep shifting themselves off by 1 per array generated. This is just to remove the whitespace before final array combination.
 	filehold="Pure"				#Pure numbers
 	trigger
 	sed -i '1,2d' Pure			#Read comment above about Arrays.
@@ -51,11 +51,17 @@
 	echo "Name,Total,SFW,Purity %" >> $nametxt
 	for ((i=0; i<$count; i++))		#Combining Arrays
 	do
-	echo ""${Names[$i]}","${Impure[$i]}","${Pure[$i]}","=100-\(\(\$B${Ratio[$i]}-\$C${Ratio[i]}\)/\$B${Ratio[$i]}\)*100"" >> $nametxt
+	if [[ ${Impure[$i]} = "0" ]]; then
+		echo ${Names[$i]} >> nameerrors
+	fi
+		echo ""${Names[$i]}","${Impure[$i]}","${Pure[$i]}","=100-\(\(\$B${Ratio[$i]}-\$C${Ratio[i]}\)/\$B${Ratio[$i]}\)*100"" >> $nametxt
 	done
 	sed -i -e 's/^\(.\)/\U\1/' $nametxt	#Fixes Capitalization on each line
 	ttd=$(($SECONDS-$ttd))
 	echo "Script completed in $ttd seconds!"
+	if [[ -f  nameerrors ]]; then
+		echo "Errors in the url were detected. Perhaps those aren't the proper names? Check nameerrors file for list of errored links. Results were still added though."
+	fi
 	rm temp					#Cleanup of temp files
 	rm Hold
 	rm Impure

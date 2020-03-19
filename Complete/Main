@@ -4,7 +4,7 @@ echo "Script by JasperTecHK, find it on my github!"
 #exec 2>/dev/null #this has been deprecated. There shouldn't be any errors to garbage-ify.
         # Defining all the Variables
 		Init="1" #Used for initialization loop confirmation
-        errorinput="Error, Error! Invalid choice, dummy!" #ErrorMessage
+	        errorinput="Error, Error! Invalid choice, dummy!" #ErrorMessage
 		inputnochk='^[0-9]+$'	#NumberFilter
 		rechoice="Fine, returning to start!"	#Reload
 		url="https://danbooru.donmai.us/counts/posts?tags=" #Used as a template. After all, this is Danbooru counting. where else would you find this specific scenario?
@@ -26,9 +26,7 @@ echo "Script by JasperTecHK, find it on my github!"
 		}
 
 		OptionsMenu () {
-		if ! [[ $sel =~ $inputnochk ]]; then
-				echo $errorinput
-		elif [[ $sel = "0" ]]; then
+		if [[ $sel = "0" ]]; then
 				echo "Who do you want to search for?"
 				read sel
 				echo $sel | sed -e 's/,\s\+/,/g' | tr " " "_"  |tr "," "\n" |tr -d "^ " >> $PWD/url/customurl
@@ -53,7 +51,24 @@ echo "Script by JasperTecHK, find it on my github!"
 				end=""
 				nametxt="Touhou.csv"
 				call="Touhou"
-            	else
+            	elif [[ $sel = "4" ]] || [[ $choice = "overwatchurl" ]]; then
+				list="overwatchurl"
+				end="(overwatch)"
+				nametxt="Overwatch.csv"
+				call="Overwatch"
+		elif [[ $sel = "5" ]] || [[ $choice = "honkaiurl" ]]; then
+				list="honkaiurl"
+				end=""
+				nametxt="Honkai.csv"
+				call="Honkai Impact"
+		elif [[ $sel = "6" ]] || [[ $choice = "RWBYurl" ]]; then
+				list="RWBYurl"
+				end=""
+				nametxt="RWBY.csv"
+				call="RWBY"
+                elif ! [[ $sel =~ $inputnochk ]]; then
+				echo $errorinput
+		else
 				echo "Wait. That isn't set up yet."
             	fi
 			finalchk
@@ -103,16 +118,22 @@ echo "Script by JasperTecHK, find it on my github!"
 		}	#Passthrough Vars to sub-script
 
 		#Begin Script
-		if [[ -z $1 ]]; then
+		if [[ -f nameerrors ]]; then
+			rm nameerrors
+		fi
+		if [[ -z $1 ]]; then					#If Opt 1 is empty, ask.
 			Dirscan
-		elif [[ ! -f url/$choice ]]; then
-			echo -ne "Invalid file chosen. Aborting."\\r
+		elif [[ $1 =~ $inputnochk ]]; then			#else if Opt1 is a number, check number
+			$sel=$1
+			OptionsMenu
+		elif [[ ! -f url/$choice ]]; then			#else, if url requested is nonexistant, goto inquire.
+			echo -ne "Invalid file chosen. Restarting."\\r
 			echo""
 			sleep 2
-			exit
+			choice=""
+			Dirscan
 		else
-			sel="0"
-			OptionsMenu
+			OptionsMenu					#else, connect to file affirmation.
 		fi
 
 		EnvCheck

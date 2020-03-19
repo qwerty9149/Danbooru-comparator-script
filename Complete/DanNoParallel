@@ -21,7 +21,10 @@
 		do
 		echo -ne " "\\r
 		echo -ne "Round $loop, $i out of $count done."\\r
-		curl -s ${list[$i]} | sed -n -e '/Post count for/,$p' | head -n 2 | tail -n 1 | tr -d " \t\n\r" >> maphold
+		clearing=$(curl -s ${list[$i]} | sed -n -e '/Post count for/,$p' | head -n 2 | tail -n 1 | tr -d " \t\n\r")
+		if [[ $clearing = "0" ]]; then
+		echo ${list[$i]} >> nameerror
+		echo $clearing >> maphold
 		echo "" >> maphold
 		done
 	}
@@ -55,8 +58,11 @@
 	compute
 	combine
 	ttd=$(($SECONDS-$ttd)) # now, from the two times, give me the operation time sans user input delay!
+	echo "Script completed in $ttd seconds!"
+	if [[ -f nameerror ]]; then
+		echo "Errors in the url were detected. Perhaps those aren't the proper names? Check nameerrors file for list of errored links. Results were still added though."
+	fi
 	rm maphold
 	rm temp
-	echo "Script completed in $ttd seconds!"
 	sleep 3
 	exit

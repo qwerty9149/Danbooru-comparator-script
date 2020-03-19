@@ -1,0 +1,21 @@
+#!/bin/bash
+echo "File fixer!"
+echo "What do you want to do?"
+echo "Press 1 for file newline cutting"
+echo "Press 2 for fixing unix errors!"
+read check
+if [[ $check = "1" ]]; then
+	echo "What is the name of the file?"
+	read sel
+	if [[ ! -f $PWD/url/$sel ]]; then
+		echo "File invalid. Exiting."
+	else
+		sel2="$sel2"
+		printf %s "$(< $PWD/url/$sel)" > $PWD/url/$sel2
+		mv $PWD/url/$sel2 $PWD/url/$sel
+		echo "Done!"
+	fi
+else
+	dos2unix $PWD/url/*
+	echo "Done!"
+fi
