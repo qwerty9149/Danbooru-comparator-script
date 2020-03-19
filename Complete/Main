@@ -66,6 +66,11 @@ echo "Script by JasperTecHK, find it on my github!"
 				end=""
 				nametxt="RWBY.csv"
 				call="RWBY"
+		elif [[ $sel = "7" ]] || [[ $choice = "vocaloidurl" ]]; then
+				list="vocaloidurl"
+				end=""
+				nametxt="vocaloid.csv"
+				call="Vocaloid and Voiceroids"
                 elif ! [[ $sel =~ $inputnochk ]]; then
 				echo $errorinput
 		else
