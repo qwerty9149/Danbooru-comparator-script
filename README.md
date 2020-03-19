@@ -8,6 +8,6 @@ For those who still don't understand it, just copy the elif to the next elif, ch
 
 Everything you need is inside the Complete folder, along with some sample files.
 
-The executing script is Main, modify this for more options. You will need to chmod +x Main, DanParallel and DanNoParallel.
+The executing script is Main, modify this for more options. You will need to chmod +x Main, DanParallel and DanNoParallel. Txtfix is optional, but will also need to be chmod+x'd to use.
 
-Requires curl, suggested to also get GNU Parallel.
+Requires curl, suggested to also get GNU Parallel for faster processing, and dos2unix to fix file errors from generating urls in Windows.
