@@ -56,7 +56,6 @@
 	fi
 		echo ""${Names[$i]}","${Impure[$i]}","${Pure[$i]}","=100-\(\(\$B${Ratio[$i]}-\$C${Ratio[i]}\)/\$B${Ratio[$i]}\)*100"" >> $nametxt
 	done
-	sed -i -e 's/^\(.\)/\U\1/' $nametxt	#Fixes Capitalization on each line
 	ttd=$(($SECONDS-$ttd))
 	echo "Script completed in $ttd seconds!"
 	if [[ -f  nameerrors ]]; then
