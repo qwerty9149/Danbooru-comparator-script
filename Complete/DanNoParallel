@@ -26,7 +26,8 @@
 		echo ${list[$i]} >> nameerror
 		echo $clearing >> maphold
 		echo "" >> maphold
-		done
+		fi
+	done
 	}
 
 	compute () {
